@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  fullName         String
+  email            String    @unique
+  password         String
+  role             String    @default("user")
+  isVerified       Boolean   @default(false)
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  customers        Customer[]
+  invoices         Invoice[]
+  totpSecret       TotpSecret?
+  @@map("users")
+}
+
+model Customer {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  country   String    @default("Nigeria")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  invoices  Invoice[]
+  @@index([userId])
+  @@map("customers")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  invoiceNumber  String   @unique
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  customerId     String
+  customer       Customer @relation(fields: [customerId], references: [id])
+  subtotal       Float
+  discount       Float    @default(0)
+  tax            Float    @default(0)
+  total          Float
+  issueDate      DateTime @default(now())
+  dueDate        DateTime?
+  status         String   @default("draft")
+  notes          String?
+  terms          String?
+  currency       String   @default("NGN")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  @@index([userId])
+  @@index([customerId])
+  @@map("invoices")
+}
+
+model TotpSecret {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secretEncrypted String
+  algorithm       String   @default("SHA1")
+  digits          Int      @default(6)
+  period          Int      @default(30)
+  isEnabled       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@map("totp_secrets")
+}
