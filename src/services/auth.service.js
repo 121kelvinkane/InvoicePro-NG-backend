@@ -1,47 +1,47 @@
 ﻿const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/jwt');
-
-// MOCK DATABASE (We will replace this with Prisma later)
-const users = [];
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const registerUser = async (name, email, password) => {
-  const userExists = users.find((user) => user.email === email);
-  if (userExists) {
-    throw new Error('User already exists');
-  }
+  // 1. Check if user exists in the REAL database
+  const userExists = await prisma.user.findUnique({ where: { email } });
+  if (userExists) throw new Error('User already exists');
 
+  // 2. Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const newUser = {
-    id: Date.now().toString(),
-    name,
-    email,
-    password: hashedPassword,
-    createdAt: new Date().toISOString(),
-  };
-
-  users.push(newUser);
+  // 3. Save to REAL database
+  const newUser = await prisma.user.create({
+    data: {
+      fullName: name,
+      email,
+      password: hashedPassword,
+    },
+  });
 
   const token = generateToken(newUser.id);
-  return { user: newUser, token };
+  return { 
+    user: { id: newUser.id, name: newUser.fullName, email: newUser.email }, 
+    token 
+  };
 };
 
 const loginUser = async (email, password) => {
-  const user = users.find((u) => u.email === email);
-  
-  if (!user) {
-    throw new Error('Invalid credentials');
-  }
+  // 1. Find user in REAL database
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error('Invalid credentials');
 
+  // 2. Check password
   const isMatch = await bcrypt.compare(password, user.password);
-  
-  if (!isMatch) {
-    throw new Error('Invalid credentials');
-  }
+  if (!isMatch) throw new Error('Invalid credentials');
 
   const token = generateToken(user.id);
-  return { user, token };
+  return { 
+    user: { id: user.id, name: user.fullName, email: user.email }, 
+    token 
+  };
 };
 
 module.exports = { registerUser, loginUser };
