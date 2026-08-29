@@ -4,7 +4,6 @@ const { protect } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 
-// Apply the "bouncer" to ALL customer routes below this line
 router.use(protect);
 
 router.post('/', createCustomer);

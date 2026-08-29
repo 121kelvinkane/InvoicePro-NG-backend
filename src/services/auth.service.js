@@ -4,15 +4,12 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const registerUser = async (name, email, password) => {
-  // 1. Check if user exists in the REAL database
   const userExists = await prisma.user.findUnique({ where: { email } });
   if (userExists) throw new Error('User already exists');
 
-  // 2. Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // 3. Save to REAL database
   const newUser = await prisma.user.create({
     data: {
       fullName: name,
@@ -29,11 +26,9 @@ const registerUser = async (name, email, password) => {
 };
 
 const loginUser = async (email, password) => {
-  // 1. Find user in REAL database
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new Error('Invalid credentials');
 
-  // 2. Check password
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid credentials');
 

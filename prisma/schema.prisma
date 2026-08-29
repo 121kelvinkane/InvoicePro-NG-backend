@@ -62,6 +62,7 @@ model Invoice {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   @@index([userId])
+  items          InvoiceItem[]
   @@index([customerId])
   @@map("invoices")
 }
@@ -78,4 +79,18 @@ model TotpSecret {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   @@map("totp_secrets")
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Float
+  unitPrice   Float
+  amount      Float
+  createdAt   DateTime @default(now())
+
+  @@index([invoiceId])
+  @@map("invoice_items")
 }

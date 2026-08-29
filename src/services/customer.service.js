@@ -1,10 +1,10 @@
-﻿// TEMPORARY DATABASE (We will replace with Prisma later)
+﻿
 const customers = [];
 
 const createCustomer = async (userId, customerData) => {
   const newCustomer = {
     id: Date.now().toString(),
-    userId, // Links this customer to the logged-in user
+    userId, 
     ...customerData,
     createdAt: new Date().toISOString(),
   };
@@ -13,7 +13,7 @@ const createCustomer = async (userId, customerData) => {
 };
 
 const getAllCustomers = async (userId) => {
-  // Only return customers that belong to the logged-in user
+
   return customers.filter((customer) => customer.userId === userId);
 };
 

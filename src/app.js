@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 
@@ -23,9 +23,9 @@ app.use(
 app.use(express.json());
 
 app.use('/api/v1', routes);
+app.use('/api/v1/invoices', require('./routes/invoice.routes'));
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/customers', customerRoutes); // <-- Connected Customer Routes
-
+app.use('/api/v1/customers', customerRoutes);
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({
