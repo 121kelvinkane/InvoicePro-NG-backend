@@ -24,14 +24,17 @@
     },
     "homepage": "https://github.com/121kelvinkane/InvoicePro-NG-backend#readme",
     "dependencies": {
+        "@prisma/client": "^7.10.0",
         "bcryptjs": "^3.0.3",
         "cors": "^2.8.6",
         "dotenv": "^17.4.2",
         "express": "^5.2.1",
         "helmet": "^8.3.0",
-        "jsonwebtoken": "^9.0.3"
+        "jsonwebtoken": "^9.0.3",
+        "resend": "^6.24.0"
     },
     "devDependencies": {
-        "nodemon": "^3.1.14"
+        "nodemon": "^3.1.14",
+        "prisma": "^8.0.0-rc.12"
     }
 }

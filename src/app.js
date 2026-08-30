@@ -6,6 +6,7 @@ const env = require('./config/env');
 const routes = require('./routes');
 const authRoutes = require('./routes/auth.routes');
 const customerRoutes = require('./routes/customer.routes'); // <-- Added Customer Routes
+const profileRoutes = require("./routes/profile.auth");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use('/api/v1', routes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customers', customerRoutes); // <-- Connected Customer Routes
+app.use('/api/v1/profiles', profileRoutes); profileRoutes
 
 app.use((err, req, res, next) => {
   console.error(err);
