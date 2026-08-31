@@ -25,6 +25,7 @@ app.use(express.json());
 app.use('/api/v1', routes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/customers', customerRoutes); // <-- Connected Customer Routes
+app.use('/api/v1/profiles', profileRoutes); profileRoutes
 
 app.use((err, req, res, next) => {
   console.error(err);
